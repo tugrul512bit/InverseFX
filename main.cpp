@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include"InverseFX.h"
 int main()
 {
