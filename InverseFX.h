@@ -36,8 +36,8 @@ namespace InverseFX
 		const InputType getStep() const { return step;}
 	private:
 		const std::function<OutputType(InputType)> fx;
-		const InputType step;
 		const InputType inverseMultiplier;
+		const InputType step;
 	};
 
 	template<typename OutputType, typename InputType>
