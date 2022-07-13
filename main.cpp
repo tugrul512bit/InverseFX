@@ -12,9 +12,8 @@ int main()
 	return 0;
 }
 
-// outputs 1.77243 by calling:
-// 	f(x): 3 times, 
-//	multiplication: 1 time, 
-//	division: 1 time
-//	subtraction: 4 times
-// per loop iteration (that is 5 times for this sample)
+// outputs 1.77243 by calling these 5 times:
+// 	4x calls to f(x) black-box function
+//	1x multiplication
+//	1x division
+//	4x subtractions
