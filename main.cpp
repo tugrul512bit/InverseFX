@@ -12,4 +12,9 @@ int main()
 	return 0;
 }
 
-// outputs 1.77243 by calling f(x) 3 times, computing floating-point multiplication 1 time, division 1 time
+// outputs 1.77243 by calling:
+// 	f(x): 3 times, 
+//	multiplication: 1 time, 
+//	division: 1 time
+//	subtraction: 4 times
+// per loop iteration (that is 5 times for this sample)
