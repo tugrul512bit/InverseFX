@@ -7,7 +7,7 @@
 
 #ifndef INVERSEFX_H_
 #define INVERSEFX_H_
-
+#include <cmath>
 #include<functional>
 namespace InverseFX
 {
