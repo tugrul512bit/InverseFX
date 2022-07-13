@@ -5,5 +5,5 @@ Requirements:
 
 - C++14 compiler
 - Auto-vectorization of compiler
-- Auto-vectorization flags -std=c++14 -O3 -march=cascadelake -mavx512f -mavx512bw -mprefer-vector-width=512 -ftree-vectorize -fno-math-errno
-- Or mavx2/msse for older INTEL CPUs or AMD CPUS
+- Auto-vectorization flags -std=c++14 -O3 -march=native -mavx2 -mprefer-vector-width=256 -ftree-vectorize -fno-math-errno
+- Or its AVX512 equivalent
