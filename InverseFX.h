@@ -20,20 +20,24 @@ namespace InverseFX
 		{
 
 		}
-		ScalarDiscreteDerivative(std::function<OutputType(InputType)> fxp):
-			fx(fxp)
+		ScalarDiscreteDerivative(std::function<OutputType(InputType)> fxp, InputType stepPrm):
+			fx(fxp), inverseMultiplier(InputType(1.0)/(InputType(2.0)*stepPrm)),
+			step(stepPrm)
 		{
 
 		}
 
-		const OutputType computeTwoPointDerivativeAt(InputType inp, InputType step) const
+		const OutputType computeTwoPointDerivativeAt(InputType inp) const
 		{
 			OutputType val1 = fx(inp+step);
 			OutputType val2 = fx(inp-step);
-			return (val1 - val2)/(InputType(2.0)*step);
+			return (val1 - val2)*inverseMultiplier;
 		}
+		const InputType getStep() const { return step;}
 	private:
 		const std::function<OutputType(InputType)> fx;
+		const InputType step;
+		const InputType inverseMultiplier;
 	};
 
 	template<typename OutputType, typename InputType>
@@ -45,17 +49,17 @@ namespace InverseFX
 
 		}
 
-		ScalarInverse(std::function<OutputType(InputType)> fxp):fx(fxp),derivative(fxp)
+		ScalarInverse(std::function<OutputType(InputType)> fxp, InputType stepPrm):fx(fxp),derivative(fxp,stepPrm)
 		{
 
 		}
 
-		const OutputType computeInverseLowQuality(InputType inp, InputType step) const
+		const OutputType computeInverseLowQuality(const InputType inp) const
 		{
 			InputType initialGuessX = inp;
 			InputType newX = inp;
-			InputType accuracy = step;
-			InputType error=step + InputType(1.0);
+			const InputType accuracy = derivative.getStep();
+			InputType error=accuracy + InputType(1.0);
 			// Newton-Raphson method
 			// f_error = function - value
 			// f'_error = derivative of function
@@ -64,7 +68,7 @@ namespace InverseFX
 			{
 				newX = initialGuessX -
 						(fx(initialGuessX)-inp) /
-						derivative.computeTwoPointDerivativeAt(initialGuessX,step);
+						derivative.computeTwoPointDerivativeAt(initialGuessX);
 				error = newX - initialGuessX;
 				initialGuessX = newX;
 			}
