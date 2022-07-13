@@ -20,6 +20,8 @@ namespace InverseFX
 		{
 
 		}
+
+		// stepPrm: size of +h and -h steps around x to compute f(x+-h) for discrete derivative
 		ScalarDiscreteDerivative(std::function<OutputType(InputType)> fxp, InputType stepPrm):
 			fx(fxp), inverseMultiplier(InputType(1.0)/(InputType(2.0)*stepPrm)),
 			step(stepPrm)
@@ -49,6 +51,7 @@ namespace InverseFX
 
 		}
 
+		// stepPrm: size of +h and -h steps around x to compute f(x+-h) for discrete derivative of f(x)
 		ScalarInverse(std::function<OutputType(InputType)> fxp, InputType stepPrm):fx(fxp),derivative(fxp,stepPrm)
 		{
 
@@ -60,6 +63,7 @@ namespace InverseFX
 			InputType newX = inp;
 			const InputType accuracy = derivative.getStep();
 			InputType error=accuracy + InputType(1.0);
+
 			// Newton-Raphson method
 			// f_error = function - value
 			// f'_error = derivative of function
@@ -72,6 +76,7 @@ namespace InverseFX
 				error = newX - initialGuessX;
 				initialGuessX = newX;
 			}
+
 			return newX;
 		}
 	private:
