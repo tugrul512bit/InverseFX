@@ -13,14 +13,15 @@ Usage:
 - parallelized (fast) inversion
 ```C++
 InverseFX::ParallelInverse<float> invPar(
-        // user's parallel f(x) function (C++ compiler vectorizes simple loop easily)
+        // user's parallel f(x) function 
         // maps one to one from inp to out, for n elements from first element
         [](float * inp, float * out, int n){
-			    for(int i=0;i<n;i++)
-			    {
-				    out[i]=inp[i]*inp[i];
-			    }
-		    },
+		// C++ compiler vectorizes simple loop easily and possibly inlines this lambda for efficient SIMD
+		for(int i=0;i<n;i++)
+		{
+		    out[i]=inp[i]*inp[i];
+		}
+	},
         // h value that is used for computing two-point derivative inside the inversion logic
         0.001f
 );
@@ -35,6 +36,7 @@ invPar.computeInverseLowQuality(inp,outp,n);
 ```C++
 InverseFX::ParallelInverse<float> invPar(
       // f(x)=x*x, for answering question of "what is inverse of x*x?"
+      // not as efficient as the parallel f(x) but rest of the algorithm is still parallelized
       [](float inp){ return inp*inp;},
       0.001f /* h */
 );
@@ -43,4 +45,14 @@ float inp[n],outp[n];
 
 // compute inverse of f(x) at all points (n elements), reading from inp and writing result to outp
 invPar.computeInverseLowQuality(inp,outp,n); 
+```
+
+- scalar inversion on scalar f(x) function
+```C++
+InverseFX::ScalarInverse<float> inv([](float inp){
+	// black-box function sample
+	// f(x)=x*x
+	return inp*inp;
+},0.001f);
+float inverseOfPI = inv.computeInverseLowQuality(3.1415f);
 ```
