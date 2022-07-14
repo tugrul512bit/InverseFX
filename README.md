@@ -1,5 +1,5 @@
 # InverseFX
-Computing a function when only its inverse is known, using Newson-Raphson method for 1D,2D,3D arrays in parallel. When user has parallelized version of f(x), it becomes faster. The overall speedup is about 5x for AVX, 5.5x for AVX2 and 7x for AVX512 with x-square function.
+Computing a function when only its inverse is known, using Newson-Raphson method for 1D,2D,3D arrays in parallel. When user has parallelized version of f(x), it becomes faster. The overall speedup is about 7x for AVX and 15x for AVX512 with x-square function.
 
 Requirements:
 
