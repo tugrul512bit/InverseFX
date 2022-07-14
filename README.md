@@ -54,5 +54,7 @@ InverseFX::ScalarInverse<float> inv([](float inp){
 	// f(x)=x*x
 	return inp*inp;
 },0.001f);
-float inverseOfPI = inv.computeInverseLowQuality(3.1415f);
+
+// inverse of x*x is sqrt(x)
+float squareRootOfPI = inv.computeInverseLowQuality(3.1415f);
 ```
