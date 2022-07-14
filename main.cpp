@@ -13,7 +13,7 @@ int main()
 	std::cout<<inv.computeInverseLowQuality(3.1415f)<<std::endl;
 
 	// scalar on array test: slow
-	constexpr int n = 1024*64;
+	constexpr int n = 67353;
 	float arr[n];
 
 
@@ -189,3 +189,11 @@ parallelized version with parallelized f(x) (fx8150 @ 2.1GHz)
 ~5x speedup with FX8150's AVX
 
 */
+
+// With godbolt.org's server that has AVX2 (and relevant compiler flags enabled)
+// 0.00575837 elements per nanosecond ---> scalar
+// 0.0121961 elements per nanosecond ----> parallel run with only scalar f(x) given for constructor
+// 0.0341529 elements per nanosecond ----> fully parallel (~6x speedup)
+
+// With AVX512 CPU of godbolt.org server (and avx512f flag enabled with preferred vector width=512)
+// 0.0403193 elements per nanosecond ----> fully parallel with lower frequency than AVX2
