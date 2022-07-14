@@ -208,10 +208,10 @@ namespace InverseFX
 
 				constexpr int simd = 64;
 				const int nSimd = n - (n%simd);
-                std::vector<DataType> val1(simd);
-                std::vector<DataType> val2(simd);
-                std::vector<DataType> out1(simd);
-                std::vector<DataType> out2(simd);
+                		std::vector<DataType> val1(simd);
+                		std::vector<DataType> val2(simd);
+                		std::vector<DataType> out1(simd);
+                		std::vector<DataType> out2(simd);
 				alignas(64)
 				DataType initialGuessX[simd];
 
@@ -266,9 +266,9 @@ namespace InverseFX
 						}
 
 						derivativePar.computeTwoPointDerivativeAt(
-                            initialGuessX,
-                            val1.data(), val2.data(),out1.data(),out2.data(),
-                            der,simd);
+                            				initialGuessX,
+                            				val1.data(), val2.data(),out1.data(),out2.data(),
+                            			der,simd);
 
 
 						for(int i=0;i<simd;i++)
