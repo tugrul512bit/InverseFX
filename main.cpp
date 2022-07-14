@@ -1,10 +1,11 @@
 
+
 #include<iostream>
 #include"InverseFX.h"
 int main()
 {
 	// scalar test
-	InverseFX::ScalarInverse<float,float> inv([](float inp){
+	InverseFX::ScalarInverse<float> inv([](float inp){
 		// black-box function sample
 		// f(x)=x*x
 		return inp*inp;
@@ -46,35 +47,72 @@ int main()
 	std::cout<<acc<<std::endl;
 
 	// parallelized version
-	InverseFX::ParallelInverse<float,float> invPar([](float inp){
-		return inp*inp;
-	},0.01f);
-
-	float inp[n],outp[n];
-	for(int j=0;j<20;j++)
 	{
-		// prepare input
+		InverseFX::ParallelInverse<float> invPar([](float inp){
+			return inp*inp;
+		},0.01f);
+
+		float inp[n],outp[n];
+		for(int j=0;j<20;j++)
+		{
+			// prepare input
+			for(int i=0;i<n;i++)
+			{
+				inp[i]=i+1;
+			}
+
+			// benchmark
+			{
+				InverseFX::Bench bench(&t);
+				invPar.computeInverseLowQuality(inp,outp,n);
+			}
+			std::cout<< n/(double)t << " elements per nanosecond"<<std::endl;
+		}
+
+		acc = 0;
 		for(int i=0;i<n;i++)
 		{
-			inp[i]=i+1;
+			acc +=outp[i];
 		}
-
-		// benchmark
-		{
-			InverseFX::Bench bench(&t);
-			invPar.computeInverseLowQuality(inp,outp,n);
-		}
-		std::cout<< n/(double)t << " elements per nanosecond"<<std::endl;
+		std::cout<<acc<<std::endl;
 	}
-
-	acc = 0;
-	for(int i=0;i<n;i++)
+	// parallelized version with parallel f(x)
 	{
-		acc +=outp[i];
+		InverseFX::ParallelInverse<float> invPar([](float * inp, float * out, int n){
+			for(int i=0;i<n;i++)
+			{
+				out[i]=inp[i]*inp[i];
+			}
+
+		},0.01f);
+
+		float inp[n],outp[n];
+		for(int j=0;j<20;j++)
+		{
+			// prepare input
+			for(int i=0;i<n;i++)
+			{
+				inp[i]=i+1;
+			}
+
+			// benchmark
+			{
+				InverseFX::Bench bench(&t);
+				invPar.computeInverseLowQuality(inp,outp,n);
+			}
+			std::cout<< n/(double)t << " elements per nanosecond"<<std::endl;
+		}
+
+		acc = 0;
+		for(int i=0;i<n;i++)
+		{
+			acc +=outp[i];
+		}
+		std::cout<<acc<<std::endl;
 	}
-	std::cout<<acc<<std::endl;
 	return 0;
 }
+
 
 /*
 scalar test: 1.77243 (square root of pi)
@@ -125,6 +163,29 @@ parallelized version without parallel f(x) (fx8150 @ 2.1 GHz):
 0.0048717 elements per nanosecond
 1.1185e+07
 
-Even without a custom parallelized f(x) function, it still gains ~100% extra performance
+parallelized version with parallelized f(x) (fx8150 @ 2.1GHz)
+0.00941158 elements per nanosecond
+0.0101714 elements per nanosecond
+0.0113167 elements per nanosecond
+0.0113237 elements per nanosecond
+0.0113976 elements per nanosecond
+0.0113068 elements per nanosecond
+0.0113352 elements per nanosecond
+0.0114023 elements per nanosecond
+0.0113305 elements per nanosecond
+0.0112831 elements per nanosecond
+0.0113745 elements per nanosecond
+0.011416 elements per nanosecond
+0.011405 elements per nanosecond
+0.0114099 elements per nanosecond
+0.0113726 elements per nanosecond
+0.0114159 elements per nanosecond
+0.0114166 elements per nanosecond
+0.0113632 elements per nanosecond
+0.0113744 elements per nanosecond
+0.0113766 elements per nanosecond
+1.1185e+07
+
+~5x speedup with FX8150's AVX
 
 */
