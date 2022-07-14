@@ -196,4 +196,4 @@ parallel work on array with parallel f(x) given by user:
 // 0.0341529 elements per nanosecond ----> fully parallel (~6x speedup)
 
 // With AVX512 CPU of godbolt.org server (and avx512f flag enabled with preferred vector width=512)
-// 0.0403193 elements per nanosecond ----> fully parallel with lower frequency than AVX2
+// 0.0403193 elements per nanosecond ----> fully parallel with lower frequency than AVX2 (~7x speedup depending on server-load)
