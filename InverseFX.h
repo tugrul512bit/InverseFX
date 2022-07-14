@@ -129,13 +129,15 @@ namespace InverseFX
 			return newX;
 		}
 
-		void computeInverseLowQualityMultiple(
+		void computeInverseLowQualityMultipleDifferentAccuracy(
 				const DataType * inp,
 				DataType * const out,
 				const int n,
-				std::function<void(DataType*,DataType*,int)> fxPar
+				std::function<void(DataType*,DataType*,int)> fxPar,
+				const DataType accuracy
 				) const noexcept
 		{
+			DataType invMult = DataType(1.0)/(DataType(2.0)*accuracy);
 			for(int i=0;i<n;i++)
 			{
 				DataType input = inp[i];
@@ -144,7 +146,7 @@ namespace InverseFX
 				DataType tmp2 = input;
 				DataType tmp3 = input;
 				DataType newX = input;
-				const DataType accuracy = derivative.getStep();
+
 				DataType error=accuracy + DataType(1.0);
 
 				// Newton-Raphson method
@@ -160,7 +162,7 @@ namespace InverseFX
 					fxPar(&tmp3,&tmp3,1);
 					newX = initialGuessX -
 							(tmp-input) /
-							((tmp2 - tmp3)/(DataType(2.0)*accuracy));
+							((tmp2 - tmp3)*invMult);
 					error = newX - initialGuessX;
 					initialGuessX = newX;
 				}
@@ -204,7 +206,7 @@ namespace InverseFX
 			// if parallel fx is given, use it
 			if(fxPar)
 			{
-				const DataType accuracy = derivative.getStep();
+				const DataType accuracy = derivativePar.getStep();
 
 				constexpr int simd = 64;
 				const int nSimd = n - (n%simd);
@@ -280,14 +282,15 @@ namespace InverseFX
 							error[i]=newX[i]-initialGuessX[i];
 						}
 
-						for(int i=0;i<simd;i++)
-						{
-							initialGuessX[i]=newX[i];
-						}
 
 						for(int i=0;i<simd;i++)
 						{
 							cond[i]=std::abs(error[i]) > accuracy;
+						}
+
+						for(int i=0;i<simd;i++)
+						{
+							initialGuessX[i]=(cond[i]?newX[i]:initialGuessX[i]);
 						}
 
 						int mask = 0;
@@ -304,8 +307,8 @@ namespace InverseFX
 					}
 				}
 
-
-				sInv.computeInverseLowQualityMultiple(inp+nSimd,out+nSimd,n-nSimd,fxPar);
+				if(nSimd<n)
+					sInv.computeInverseLowQualityMultipleDifferentAccuracy(inp+nSimd,out+nSimd,n-nSimd,fxPar,accuracy);
 
 			}
 			else
@@ -390,14 +393,15 @@ namespace InverseFX
 							error[i]=newX[i]-initialGuessX[i];
 						}
 
-						for(int i=0;i<simd;i++)
-						{
-							initialGuessX[i]=newX[i];
-						}
 
 						for(int i=0;i<simd;i++)
 						{
 							cond[i]=std::abs(error[i]) > accuracy;
+						}
+
+						for(int i=0;i<simd;i++)
+						{
+							initialGuessX[i]=cond[i]?newX[i]:initialGuessX[i];
 						}
 
 						int mask = 0;
