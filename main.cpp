@@ -1,5 +1,4 @@
 
-
 #include<iostream>
 #include"InverseFX.h"
 int main()
@@ -9,11 +8,11 @@ int main()
 		// black-box function sample
 		// f(x)=x*x
 		return inp*inp;
-	},0.01f);
+	},0.001f);
 	std::cout<<inv.computeInverseLowQuality(3.1415f)<<std::endl;
 
 	// scalar on array test: slow
-	constexpr int n = 67353;
+	constexpr int n = 15000;
 	float arr[n];
 
 
@@ -50,7 +49,7 @@ int main()
 	{
 		InverseFX::ParallelInverse<float> invPar([](float inp){
 			return inp*inp;
-		},0.01f);
+		},0.001f);
 
 		float inp[n],outp[n];
 		for(int j=0;j<20;j++)
@@ -84,7 +83,7 @@ int main()
 				out[i]=inp[i]*inp[i];
 			}
 
-		},0.01f);
+		},0.001f);
 
 		float inp[n],outp[n];
 		for(int j=0;j<20;j++)
@@ -114,79 +113,80 @@ int main()
 }
 
 
+
 /*
-scalar test: 1.77243 (square root of pi)
+1.77243 -----> square root (inverse of x*x) of 3.1415
 
-scalar on array test (fx8150 @ 2.1 GHz):
-0.00211415 elements per nanosecond
-0.00223072 elements per nanosecond
-0.00223016 elements per nanosecond
-0.00223383 elements per nanosecond
-0.00223186 elements per nanosecond
-0.00223494 elements per nanosecond
-0.0021805 elements per nanosecond
-0.00210438 elements per nanosecond
-0.00215071 elements per nanosecond
-0.00214863 elements per nanosecond
-0.0021917 elements per nanosecond
-0.00219616 elements per nanosecond
-0.00218305 elements per nanosecond
-0.00218948 elements per nanosecond
-0.00221218 elements per nanosecond
-0.00221851 elements per nanosecond
-0.0021991 elements per nanosecond
-0.00221038 elements per nanosecond
-0.00215757 elements per nanosecond
-0.00218085 elements per nanosecond
-1.1185e+07
+scalar work on array:
+0.00248134 elements per nanosecond
+0.00234355 elements per nanosecond
+0.00246709 elements per nanosecond
+0.00249108 elements per nanosecond
+0.00247686 elements per nanosecond
+0.00249032 elements per nanosecond
+0.00249328 elements per nanosecond
+0.00247671 elements per nanosecond
+0.00248345 elements per nanosecond
+0.00248592 elements per nanosecond
+0.0024748 elements per nanosecond
+0.00248991 elements per nanosecond
+0.00249236 elements per nanosecond
+0.00249008 elements per nanosecond
+0.00237878 elements per nanosecond
+0.00247678 elements per nanosecond
+0.00249626 elements per nanosecond
+0.00248505 elements per nanosecond
+0.00248557 elements per nanosecond
+0.00249246 elements per nanosecond
+1.22481e+06
 
-parallelized version without parallel f(x) (fx8150 @ 2.1 GHz):
-0.00453103 elements per nanosecond
-0.00458556 elements per nanosecond
-0.00483413 elements per nanosecond
-0.0048587 elements per nanosecond
-0.00484984 elements per nanosecond
-0.00485454 elements per nanosecond
-0.00480151 elements per nanosecond
-0.00476971 elements per nanosecond
-0.00478836 elements per nanosecond
-0.00487069 elements per nanosecond
-0.00487621 elements per nanosecond
-0.00487004 elements per nanosecond
-0.00487827 elements per nanosecond
-0.00487663 elements per nanosecond
-0.00463526 elements per nanosecond
-0.00477984 elements per nanosecond
-0.00477555 elements per nanosecond
-0.00481585 elements per nanosecond
-0.0047672 elements per nanosecond
-0.0048717 elements per nanosecond
-1.1185e+07
+parallel work on array with only scalar f(x) given by user:
+0.00516736 elements per nanosecond
+0.00519919 elements per nanosecond
+0.00521338 elements per nanosecond
+0.0052303 elements per nanosecond
+0.00524147 elements per nanosecond
+0.00520205 elements per nanosecond
+0.00521525 elements per nanosecond
+0.00524055 elements per nanosecond
+0.00520077 elements per nanosecond
+0.00523028 elements per nanosecond
+0.00517554 elements per nanosecond
+0.00524118 elements per nanosecond
+0.00521376 elements per nanosecond
+0.00520089 elements per nanosecond
+0.00524106 elements per nanosecond
+0.00519718 elements per nanosecond
+0.00519525 elements per nanosecond
+0.00521436 elements per nanosecond
+0.00524124 elements per nanosecond
+0.00517988 elements per nanosecond
+1.22481e+06
 
-parallelized version with parallelized f(x) (fx8150 @ 2.1GHz)
-0.00941158 elements per nanosecond
-0.0101714 elements per nanosecond
-0.0113167 elements per nanosecond
-0.0113237 elements per nanosecond
-0.0113976 elements per nanosecond
-0.0113068 elements per nanosecond
-0.0113352 elements per nanosecond
-0.0114023 elements per nanosecond
-0.0113305 elements per nanosecond
-0.0112831 elements per nanosecond
-0.0113745 elements per nanosecond
-0.011416 elements per nanosecond
-0.011405 elements per nanosecond
-0.0114099 elements per nanosecond
-0.0113726 elements per nanosecond
-0.0114159 elements per nanosecond
-0.0114166 elements per nanosecond
-0.0113632 elements per nanosecond
-0.0113744 elements per nanosecond
-0.0113766 elements per nanosecond
-1.1185e+07
+parallel work on array with parallel f(x) given by user:
+0.0114558 elements per nanosecond
+0.0110267 elements per nanosecond
+0.0112143 elements per nanosecond
+0.0112153 elements per nanosecond
+0.0111488 elements per nanosecond
+0.0109558 elements per nanosecond
+0.0115662 elements per nanosecond
+0.0113101 elements per nanosecond
+0.0115026 elements per nanosecond
+0.0115608 elements per nanosecond
+0.0113773 elements per nanosecond
+0.0115689 elements per nanosecond
+0.0115629 elements per nanosecond
+0.011143 elements per nanosecond
+0.0112179 elements per nanosecond
+0.0112201 elements per nanosecond
+0.01098 elements per nanosecond
+0.0112175 elements per nanosecond
+0.0112157 elements per nanosecond
+0.0110193 elements per nanosecond
+1.22481e+06
 
-~5x speedup with FX8150's AVX
+~5.5x speedup with FX8150's AVX
 
 */
 
