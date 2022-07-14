@@ -64,19 +64,16 @@ namespace InverseFX
 		}
 
 		inline
-		void computeTwoPointDerivativeAt(DataType * inp, DataType * out, int n) const noexcept
+		void computeTwoPointDerivativeAt(DataType * inp, DataType * val1, DataType * val2, DataType * out1, DataType * out2,     DataType * out, int n) const noexcept
 		{
-			std::vector<DataType> val1(n);
-			std::vector<DataType> val2(n);
-			std::vector<DataType> out1(n);
-			std::vector<DataType> out2(n);
+
 			for(int i=0;i<n;i++)
 			{
 				val1[i]=inp[i]+step;
 				val2[i]=inp[i]-step;
 			}
-			fx(val1.data(),out1.data(),n);
-			fx(val2.data(),out2.data(),n);
+			fx(val1,out1,n);
+			fx(val2,out2,n);
 
 			for(int i=0;i<n;i++)
 			{
@@ -89,6 +86,7 @@ namespace InverseFX
 		const std::function<void(DataType*,DataType*,int)> fx;
 		const DataType inverseMultiplier;
 		const DataType step;
+
 	};
 
 	template<typename DataType>
@@ -210,7 +208,10 @@ namespace InverseFX
 
 				constexpr int simd = 64;
 				const int nSimd = n - (n%simd);
-
+                std::vector<DataType> val1(simd);
+                std::vector<DataType> val2(simd);
+                std::vector<DataType> out1(simd);
+                std::vector<DataType> out2(simd);
 				alignas(64)
 				DataType initialGuessX[simd];
 
@@ -264,7 +265,10 @@ namespace InverseFX
 							fxa[i]=fxa[i]-inp[i+j];
 						}
 
-						derivativePar.computeTwoPointDerivativeAt(initialGuessX,der,simd);
+						derivativePar.computeTwoPointDerivativeAt(
+                            initialGuessX,
+                            val1.data(), val2.data(),out1.data(),out2.data(),
+                            der,simd);
 
 
 						for(int i=0;i<simd;i++)
