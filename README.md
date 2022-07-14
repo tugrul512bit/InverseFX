@@ -8,6 +8,13 @@ Requirements:
 - Auto-vectorization flags -std=c++14 -O3 -march=native -mavx2 -mprefer-vector-width=256 -ftree-vectorize -fno-math-errno
 - Or AVX512 version of flags and 512 vector width
 
+How it works:
+
+- user has an f(x) function given to the constructor
+- constructor also takes h(step length) argument for the discrete-derivative calculations such as "two point derivative"/"five point stencil"
+- whenever inverse of f(x) at x=x0 is needed, user can call obj.computeInverse...() method
+- the computeInverse..() method uses Newton-Raphson method and discrete-derivative to approach inverse f(x0)
+
 Usage:
 
 - parallelized (fast) inversion
