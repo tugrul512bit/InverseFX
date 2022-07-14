@@ -1,5 +1,5 @@
-#include<iostream>
 
+#include<iostream>
 #include"InverseFX.h"
 int main()
 {
@@ -14,15 +14,18 @@ int main()
 	// scalar on array test: slow
 	constexpr int n = 1024*64;
 	float arr[n];
-	// prepare input
-	for(int i=0;i<n;i++)
-	{
-		arr[i]=1.01f+std::sin(clock());
-	}
+
 
 	size_t t;
 	for(int j=0;j<20;j++)
 	{
+		// prepare input
+		for(int i=0;i<n;i++)
+		{
+			arr[i]=i+1;
+		}
+
+		// benchmark
 		{
 
 			InverseFX::Bench bench(&t);
@@ -50,6 +53,13 @@ int main()
 	float inp[n],outp[n];
 	for(int j=0;j<20;j++)
 	{
+		// prepare input
+		for(int i=0;i<n;i++)
+		{
+			inp[i]=i+1;
+		}
+
+		// benchmark
 		{
 			InverseFX::Bench bench(&t);
 			invPar.computeInverseLowQuality(inp,outp,n);
@@ -60,45 +70,61 @@ int main()
 	acc = 0;
 	for(int i=0;i<n;i++)
 	{
-		acc +=arr[i];
+		acc +=outp[i];
 	}
 	std::cout<<acc<<std::endl;
 	return 0;
 }
 
-// first part outputs "1.77243" by calling these 5 times:
-// 	4x calls to f(x) black-box function
-//	1x multiplication
-//	1x division
-//	4x subtractions
-// second part computes array elements one by one (slow)
-// third part does same in parallel (fast)
-
 /*
-output:
+scalar test: 1.77243 (square root of pi)
 
-1.77243
-0.0278211 elements per nanosecond
-0.0347396 elements per nanosecond
-0.0425088 elements per nanosecond
-0.0491652 elements per nanosecond
-0.0571772 elements per nanosecond
-0.064796 elements per nanosecond
-0.0817016 elements per nanosecond
-0.0894475 elements per nanosecond
-0.113684 elements per nanosecond
-0.113131 elements per nanosecond
-131011
-0.112034 elements per nanosecond
-0.143435 elements per nanosecond
-0.143697 elements per nanosecond
-0.146588 elements per nanosecond
-0.146285 elements per nanosecond
-0.144265 elements per nanosecond
-0.144567 elements per nanosecond
-0.132684 elements per nanosecond
-0.143649 elements per nanosecond
-0.143501 elements per nanosecond
-131011
+scalar on array test (fx8150 @ 2.1 GHz):
+0.00211415 elements per nanosecond
+0.00223072 elements per nanosecond
+0.00223016 elements per nanosecond
+0.00223383 elements per nanosecond
+0.00223186 elements per nanosecond
+0.00223494 elements per nanosecond
+0.0021805 elements per nanosecond
+0.00210438 elements per nanosecond
+0.00215071 elements per nanosecond
+0.00214863 elements per nanosecond
+0.0021917 elements per nanosecond
+0.00219616 elements per nanosecond
+0.00218305 elements per nanosecond
+0.00218948 elements per nanosecond
+0.00221218 elements per nanosecond
+0.00221851 elements per nanosecond
+0.0021991 elements per nanosecond
+0.00221038 elements per nanosecond
+0.00215757 elements per nanosecond
+0.00218085 elements per nanosecond
+1.1185e+07
+
+parallelized version without parallel f(x) (fx8150 @ 2.1 GHz):
+0.00453103 elements per nanosecond
+0.00458556 elements per nanosecond
+0.00483413 elements per nanosecond
+0.0048587 elements per nanosecond
+0.00484984 elements per nanosecond
+0.00485454 elements per nanosecond
+0.00480151 elements per nanosecond
+0.00476971 elements per nanosecond
+0.00478836 elements per nanosecond
+0.00487069 elements per nanosecond
+0.00487621 elements per nanosecond
+0.00487004 elements per nanosecond
+0.00487827 elements per nanosecond
+0.00487663 elements per nanosecond
+0.00463526 elements per nanosecond
+0.00477984 elements per nanosecond
+0.00477555 elements per nanosecond
+0.00481585 elements per nanosecond
+0.0047672 elements per nanosecond
+0.0048717 elements per nanosecond
+1.1185e+07
+
+Even without a custom parallelized f(x) function, it still gains ~100% extra performance
 
 */
