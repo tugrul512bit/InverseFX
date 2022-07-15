@@ -24,10 +24,10 @@ namespace InverseFX
 
 		}
 
-		// stepPrm: size of +h and -h steps around x to compute f(x+-h) for discrete derivative
-		ScalarDiscreteDerivative(std::function<DataType(DataType)> fxp, DataType stepPrm):
-			fx(fxp), inverseMultiplier(DataType(1.0)/(DataType(2.0)*stepPrm)),
-			step(stepPrm)
+		// hAccuracy: size of +h and -h steps around x to compute f(x+-h) for discrete derivative
+		ScalarDiscreteDerivative(std::function<DataType(DataType)> fxp, DataType hAccuracy):
+			fx(fxp), inverseMultiplier(DataType(1.0)/(DataType(2.0)*hAccuracy)),
+			step(hAccuracy)
 		{
 
 		}
@@ -55,10 +55,10 @@ namespace InverseFX
 
 		}
 
-		// stepPrm: size of +h and -h steps around x to compute f(x+-h) for discrete derivative
-		ParallelDiscreteDerivative(std::function<void(DataType*,DataType*,int)> fxp, DataType stepPrm):
-			fx(fxp), inverseMultiplier(DataType(1.0)/(DataType(2.0)*stepPrm)),
-			step(stepPrm)
+		// hAccuracy: size of +h and -h steps around x to compute f(x+-h) for discrete derivative
+		ParallelDiscreteDerivative(std::function<void(DataType*,DataType*,int)> fxp, DataType hAccuracy):
+			fx(fxp), inverseMultiplier(DataType(1.0)/(DataType(2.0)*hAccuracy)),
+			step(hAccuracy)
 		{
 
 		}
@@ -98,8 +98,8 @@ namespace InverseFX
 
 		}
 
-		// stepPrm: size of +h and -h steps around x to compute f(x+-h) for discrete derivative of f(x)
-		ScalarInverse(std::function<DataType(DataType)> fxp, DataType stepPrm):fx(fxp),derivative(fxp,stepPrm)
+		// hAccuracy: size of +h and -h steps around x to compute f(x+-h) for discrete derivative of f(x)
+		ScalarInverse(std::function<DataType(DataType)> fxp, DataType hAccuracy):fx(fxp),derivative(fxp,hAccuracy)
 		{
 
 		}
@@ -183,18 +183,18 @@ namespace InverseFX
 
 		}
 
-		// stepPrm: size of +h and -h steps around x to compute f(x+-h) for discrete derivative of f(x)
+		// hAccuracy: size of +h and -h steps around x to compute f(x+-h) for discrete derivative of f(x)
 		// this constructor uses a scalar f(x) that is a bottleneck in SIMD parallelization
-		ParallelInverse(std::function<DataType(DataType)> fxp, DataType stepPrm):
-			fx(fxp),derivative(fxp,stepPrm),sInv(fxp,stepPrm)
+		ParallelInverse(std::function<DataType(DataType)> fxp, DataType hAccuracy):
+			fx(fxp),derivative(fxp,hAccuracy),sInv(fxp,hAccuracy)
 		{
 
 		}
 
-		// stepPrm: size of +h and -h steps around x to compute f(x+-h) for discrete derivative of f(x)
+		// hAccuracy: size of +h and -h steps around x to compute f(x+-h) for discrete derivative of f(x)
 		// fxParP: parallel version of f(x) for fully SIMD computations
-		ParallelInverse(std::function<void(DataType*,DataType*,int)> fxParP, DataType stepPrm):
-			fxPar(fxParP),derivativePar(fxParP,stepPrm)
+		ParallelInverse(std::function<void(DataType*,DataType*,int)> fxParP, DataType hAccuracy):
+			fxPar(fxParP),derivativePar(fxParP,hAccuracy)
 		{
 
 		}
