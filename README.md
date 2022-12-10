@@ -26,7 +26,7 @@ InverseFX::ParallelInverse<float> invPar(
 		// C++ compiler vectorizes simple loop easily and possibly inlines this lambda for efficient SIMD
 		for(int i=0;i<n;i++)
 		{
-		    out[i]=inp[i]*inp[i];
+		    out[i]=inp[i]*inp[i]; // square of x
 		}
 	},
         // h value that is used for computing two-point derivative inside the inversion logic
@@ -36,7 +36,7 @@ InverseFX::ParallelInverse<float> invPar(
 float inp[n],outp[n];
 
 // compute inverse of f(x) at all points (n elements), reading from inp and writing result to outp
-invPar.computeInverseLowQuality(inp,outp,n); 
+invPar.computeInverseLowQuality(inp,outp,n); // square-root is found for n-elements
 ```
 
 - parallelized inversion using scalar f(x) function
