@@ -194,3 +194,9 @@ parallelized newton-raphson + parallel user-f(x)
 // 0.00665837 elements per nanosecond ---> scalar
 // 0.0121961 elements per nanosecond ----> parallel run with only scalar f(x) given for constructor
 // 0.110637 elements per nanosecond ----> fully parallel (~17x speedup)
+
+
+// Ryzen 9 7900 (avx512)
+// 0.0089 elements per nanosecond ---> scalar
+// 0.033 elements per nanosecond ----> parallel run with only scalar f(x) given for constructor
+// 0.133 elements per nanosecond ----> fully parallel (~15x speedup) (6x FX8150)
